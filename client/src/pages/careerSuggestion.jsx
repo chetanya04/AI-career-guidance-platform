@@ -12,7 +12,7 @@ export default function CareerSuggestion() {
 
   useEffect(() => {
     const fetchCareer = async () => {
-      const res = await api.post('/career/suggest', { description, studentClass, skills });
+      const res = await api.post('api/career/suggest', { description, studentClass, skills });
       setSuggestions(res.data.careerSuggestions);
       setLoading(false);
     };

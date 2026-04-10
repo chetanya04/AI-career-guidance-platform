@@ -24,7 +24,7 @@ export default function Profile() {
     try {
       setLoading(true);
       setError('');
-      await api.post('/student/profile', {
+      await api.post('/api/student/profile', {
         name,
         class: studentClass,
         description,

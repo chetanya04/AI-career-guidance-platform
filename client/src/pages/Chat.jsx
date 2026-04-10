@@ -20,7 +20,7 @@ export default function Chat() {
     const userId = 'test-user-id';
     setLoading(true);
 
-    const res = await api.post('/chat', { 
+    const res = await api.post('api/chat', { 
       userId, 
       careerPath, 
       message: `Tell me about ${careerPath} career` 
@@ -39,7 +39,7 @@ export default function Chat() {
     setInput('');
     setLoading(true);
 
-    const res = await api.post('/chat', { userId, careerPath, message: msg });
+    const res = await api.post('api/chat', { userId, careerPath, message: msg });
     setMessages(prev => [...prev, { role: 'assistant', content: res.data.reply }]);
     setLoading(false);
   };
