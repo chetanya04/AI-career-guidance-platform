@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { useLocation } from 'react-router-dom';
-import "../css/Chat.css"
+import "../css/Chat.css";
 
 export default function Chat() {
   const { state } = useLocation();
@@ -11,24 +11,24 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const startConversation = async () => {
+      const userId = 'test-user-id';
+      setLoading(true);
+
+      const res = await api.post('api/chat', { 
+        userId, 
+        careerPath, 
+        message: `Tell me about ${careerPath} career` 
+      });
+
+      setMessages([{ role: 'assistant', content: res.data.reply }]);
+      setLoading(false);
+    };
+
     if (careerPath) {
       startConversation();
     }
-  }, []);
-
-  const startConversation = async () => {
-    const userId = 'test-user-id';
-    setLoading(true);
-
-    const res = await api.post('api/chat', { 
-      userId, 
-      careerPath, 
-      message: `Tell me about ${careerPath} career` 
-    });
-    
-    setMessages([{ role: 'assistant', content: res.data.reply }]);
-    setLoading(false);
-  };
+  }, [careerPath]); // ✅ FIXED
 
   const sendMessage = async (msg) => {
     if (!msg.trim()) return;

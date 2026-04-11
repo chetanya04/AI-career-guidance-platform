@@ -12,12 +12,20 @@ export default function CareerSuggestion() {
 
   useEffect(() => {
     const fetchCareer = async () => {
-      const res = await api.post('api/career/suggest', { description, studentClass, skills });
+      const res = await api.post('api/career/suggest', { 
+        description, 
+        studentClass, 
+        skills 
+      });
+
       setSuggestions(res.data.careerSuggestions);
       setLoading(false);
     };
-    fetchCareer();
-  }, []);
+
+    if (description || skills || studentClass) {
+      fetchCareer();
+    }
+  }, [description, studentClass, skills]); // ✅ FIXED
 
   return (
     <div className="suggestion-container">

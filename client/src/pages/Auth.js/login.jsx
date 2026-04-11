@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Image from "../../assets/image.png";
 import Logo from "../../assets/logo.png";
-import { FaEye } from "react-icons/fa6";
-import { FaEyeSlash } from "react-icons/fa6";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,13 +20,13 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => { 
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/login`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,9 +37,7 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token in localStorage
         localStorage.setItem("token", data.token);
-        // Redirect to home page
         window.location.href = "/home";
       } else {
         setError(data.message || "Login failed");
@@ -50,21 +48,30 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="login-main">
       <div className="login-left">
-        <img src={Image} alt="" />
+        <img src={Image} alt="login visual" />
       </div>
+
       <div className="login-right">
         <div className="login-right-container">
+
           <div className="login-logo">
-            <img src={Logo} alt="" />
+            <img src={Logo} alt="logo" />
           </div>
+
           <div className="login-center">
             <h2>Welcome back!</h2>
             <p>Please enter your details</p>
-            {error && <p style={{color: 'red', fontSize: '1.4rem', marginBottom: '10px'}}>{error}</p>}
+
+            {error && (
+              <p style={{ color: 'red', fontSize: '1.4rem', marginBottom: '10px' }}>
+                {error}
+              </p>
+            )}
+
             <form onSubmit={handleSubmit}>
               <input 
                 type="email" 
@@ -74,6 +81,7 @@ const Login = () => {
                 onChange={handleChange}
                 required
               />
+
               <div className="pass-input-div">
                 <input 
                   type={showPassword ? "text" : "password"} 
@@ -83,8 +91,14 @@ const Login = () => {
                   onChange={handleChange}
                   required
                 />
-                {showPassword ? <FaEyeSlash onClick={() => {setShowPassword(!showPassword)}} /> : <FaEye onClick={() => {setShowPassword(!showPassword)}} />}
+
+                {showPassword ? (
+                  <FaEyeSlash onClick={() => setShowPassword(!showPassword)} />
+                ) : (
+                  <FaEye onClick={() => setShowPassword(!showPassword)} />
+                )}
               </div>
+
               <div className="login-center-options">
                 <div className="remember-div">
                   <input type="checkbox" id="remember-checkbox" />
@@ -92,10 +106,13 @@ const Login = () => {
                     Remember for 30 days
                   </label>
                 </div>
-                <a href="#" className="forgot-pass-link">
+
+                {/* ✅ FIXED */}
+                <Link to="/forgot-password" className="forgot-pass-link">
                   Forgot password?
-                </a>
+                </Link>
               </div>
+
               <div className="login-center-buttons">
                 <button type="submit" disabled={loading}>
                   {loading ? "Logging in..." : "Log In"}
@@ -103,9 +120,11 @@ const Login = () => {
               </div>
             </form>
           </div>
+
           <p className="login-bottom-p">
-            Don't have an account? <a href="/register">Sign Up</a>
+            Don't have an account? <Link to="/register">Sign Up</Link>
           </p>
+
         </div>
       </div>
     </div>
