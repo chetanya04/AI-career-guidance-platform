@@ -10,38 +10,45 @@ const authRoutes = require('../routes/authRoute');
 
 const app = express();
 
-// CORS (important for Vercel)
 app.use(cors({
-  origin: "*", // or your frontend URL
+  origin: "*",
   credentials: true
 }));
 
 app.use(express.json());
 
-// Routes
-app.get('/', (req, res) => {
-  res.json({ message: 'API is running!' });
-});
-
-app.use('/api/chat', chatRoute);
-app.use('/api/career', careerRoute);
-app.use('/api/auth', authRoutes);
-app.use('/api/student', studentRoute);
-
-// MongoDB connection (important: connect once)
+// MongoDB connection
 let isConnected = false;
 
 const connectDB = async () => {
   if (isConnected) return;
+
   const db = await mongoose.connect(process.env.MONGO_URI);
   isConnected = db.connections[0].readyState;
+
   console.log("MongoDB Connected");
 };
 
-// Middleware to ensure DB connection
+// DB middleware — BEFORE routes
 app.use(async (req, res, next) => {
-  await connectDB();
-  next();
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("Database connection failed:", error);
+    res.status(500).json({ message: "Database connection failed" });
+  }
 });
+
+// Test route
+app.get('/', (req, res) => {
+  res.json({ message: 'API is running!' });
+});
+
+// Routes
+app.use('/api/chat', chatRoute);
+app.use('/api/career', careerRoute);
+app.use('/api/auth', authRoutes);
+app.use('/api/student', studentRoute);
 
 module.exports = app;
